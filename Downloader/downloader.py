@@ -101,11 +101,16 @@ def download_everything(manga_id: str, location: str, timeout: float, langs: {st
         (False, False): lambda _: True
      }[(chapter_floor is not None, chapter_ceiling is not None)]
     with requests.Session() as session:
-        for k, v in sorted(get_chapters(session, manga_id, langs, timeout).items(), key=lambda x: float(x[0])):
+        chapters = list(get_chapters(session, manga_id, langs, timeout).items())
+        # not 100% percent sure every chapter can be converted to a float
+        try:
+            chapters.sort(key=lambda x: float(x[0]))
+        except ValueError:
+            pass
+        for k, v in chapters:
             try:
                 if check(k):
                     download_chapter(session, v, f'{location}/{k}', timeout)
-            # not 100% percent sure every chapter can be converted to a float
             except TypeError:
                 download_chapter(session, v, f'{location}/{k}', timeout)
     # the console shoudln't look buggy if i do this
