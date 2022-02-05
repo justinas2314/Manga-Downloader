@@ -22,10 +22,16 @@ if __name__ == '__main__':
     langs = set(map(lambda x: x.strip(), os.getenv('langs').split(',')))
     timeout = float(os.getenv('timeout'))
     root_dir = os.getenv('location')
-    download_everything(
-        mangadex_id,
-        os.path.join(root_dir, name if name is not None else mangadex_id),
-        timeout,
-        langs,
-        *chapter_range
-    )
+    while True:
+        try:
+            download_everything(
+                mangadex_id,
+                os.path.join(root_dir, name if name is not None else mangadex_id),
+                timeout,
+                langs,
+                *chapter_range
+            )
+        except:
+            pass
+        else:
+            break
