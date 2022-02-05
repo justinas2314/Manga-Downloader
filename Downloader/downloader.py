@@ -18,7 +18,7 @@ def get_chapters(session: requests.Session, manga_id: str, langs: {str} = None, 
             json = r.json()
         for i in json['data']:
             if i['attributes']['translatedLanguage'] in langs:
-                data[i['attributes']['chapter']] = i
+                data[i['attributes']['chapter']] = i['id']
         if offset > json['total']:
             break
         else:
@@ -27,28 +27,29 @@ def get_chapters(session: requests.Session, manga_id: str, langs: {str} = None, 
     return data
 
 
-def download_chapter(session: requests.Session, chapter, location: str, timeout: float = 1):
+def download_chapter(session: requests.Session, chapter_num: str, chapter_id: str, location: str, timeout: float = 1):
     """
     this function raises only if the main mangadex server does not respond correctly
     """
-    with session.get(f'https://api.mangadex.org/at-home/server/{chapter["id"]}') as r:
+    with session.get(f'https://api.mangadex.org/at-home/server/{chapter_id}') as r:
         r.raise_for_status()
         image_server = r.json()['baseUrl']
+        chapter = r.json()['chapter']
     os.makedirs(location, exist_ok=True)
-    length = len(chapter['attributes']['data'])
-    for i, j in enumerate(chapter['attributes']['data']):
-        print(f'downloading ch. {chapter["attributes"]["chapter"]} im. {i + 1}/{length}'.ljust(50), end='\r')
+    length = len(chapter['data'])
+    for i, j in enumerate(chapter['data']):
+        print(f'downloading ch. {chapter_num} im. {i + 1}/{length}'.ljust(50), end='\r')
         while True:
             try:
                 download_image(
                     session,
                     f'{location}/{i}.{j.split(".")[-1]}',
-                    f'{image_server}/data/{chapter["attributes"]["hash"]}/{j}',
+                    f'{image_server}/data/{chapter["hash"]}/{j}',
                     image_server
                 )
             except requests.HTTPError:
                 # if the server does not respond we change servers
-                with session.get(f'https://api.mangadex.org/at-home/server/{chapter["id"]}') as r:
+                with session.get(f'https://api.mangadex.org/at-home/server/{chapter_id}') as r:
                     r.raise_for_status()
                     image_server = r.json()['baseUrl']
                     time.sleep(timeout)
@@ -107,11 +108,11 @@ def download_everything(manga_id: str, location: str, timeout: float, langs: {st
             chapters.sort(key=lambda x: float(x[0]))
         except ValueError:
             pass
-        for k, v in chapters:
+        for chapter_num, chapter_id in chapters:
             try:
-                if check(k):
-                    download_chapter(session, v, f'{location}/{k}', timeout)
+                if check(chapter_num):
+                    download_chapter(session, chapter_num, chapter_id, f'{location}/{chapter_num}', timeout)
             except TypeError:
-                download_chapter(session, v, f'{location}/{k}', timeout)
+                download_chapter(session, chapter_num, chapter_id, f'{location}/{chapter_num}', timeout)
     # the console shoudln't look buggy if i do this
     print(100 * ' ', end='\r')
