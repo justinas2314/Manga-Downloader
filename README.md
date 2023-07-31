@@ -1,6 +1,20 @@
-# Mangadex-Downloader
-Download manga from mangadex to read offline (their servers are really unreliable)
+# Manga-Downloader
+Download manga from mangadex (or other manga websites) to read offline
+## Manga Downloader
+`Manga Downloader/main.py` is designed to download manga from generic manga websites  
+it takes 2-3 arguments
+* url of the website
+* name of the manga (this argument only changes where the manga is saved)
+* reverse - whether to reverse the chapters after scraping them from the given url (changes how the chapters are indexed)
+
+`.env` can also be edited to change the base location, timeout and timeout when met with an error  
+It was only tested on one website but the implementation is purposefully generic so there is a decent chance that it will work on most websites
+#### Implementation
+It scrapes the initial url for a chapter list (takes hrefs from the unindexed list with the most hrefs)  
+Then it scrapes the given urls by downloading all images from a div with the most images with srcs of the same domain  
+The way it stores these images makes it compatible with the reader inside `Reader`
 ## How to use the Downloader
+Not tested if this still works as Mangadex likes to change their API  
 The script `main.py` takes 3 positional command line arguments:
 * `mangadex_id` - the id of the manga you want to download from the url (eg. for `https://mangadex.org/title/a77742b1-befd-49a4-bff5-1ad4e6b0ef7b/chainsaw-man` it would be `a77742b1-befd-49a4-bff5-1ad4e6b0ef7b`)
 * `name` - creates a new directory inside the root folder where it will save the chapters
