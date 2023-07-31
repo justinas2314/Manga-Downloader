@@ -5,7 +5,7 @@ Download manga from mangadex (or other manga websites) to read offline
 it takes 2-3 arguments
 * url of the website
 * name of the manga (this argument only changes where the manga is saved)
-* reverse - whether to reverse the chapters after scraping them from the given url (changes how the chapters are indexed)
+* do not reverse (optional, default behaviour is reverse) - whether to reverse the chapters after scraping them from the given url (changes how the chapters are indexed)
 
 `.env` can also be edited to change the base location, timeout and timeout when met with an error  
 It was only tested on one website but the implementation is purposefully generic so there is a decent chance that it will work on most websites
