@@ -8,10 +8,10 @@ it takes 2-3 arguments
 * do not reverse (optional, default behaviour is reverse) - whether to reverse the chapters after scraping them from the given url (changes how the chapters are indexed)
 
 `.env` can also be edited to change the base location, timeout and timeout when met with an error  
-It was only tested on one website but the implementation is purposefully generic so there is a decent chance that it will work on most websites
+It was only tested on ~~one~~ two websites but the implementation is purposefully generic so there is a decent chance that it will work on most websites
 #### Implementation
 It scrapes the initial url for a chapter list (takes hrefs from the unindexed list with the most hrefs)  
-Then it scrapes the given urls by downloading all images from a div with the most images with srcs of the same domain  
+Then it scrapes the given urls by downloading all images from a div with the most images with srcs (src must start with 'http') of the same domain  
 The way it stores these images makes it compatible with the reader inside `Reader`
 ## How to use the Downloader
 Not tested if this still works as Mangadex likes to change their API  
