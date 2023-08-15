@@ -35,7 +35,7 @@ def get_image_urls(page_url):
         counts = collections.defaultdict(lambda: [])
         for img in div.find_all('img'):
             src = img.get('src')
-            if not src.startswith('http'):
+            if src is None or not src.startswith('http'):
                 continue
             try:
                 counts[src.split('//')[1].split('/')[0]].append(src)
