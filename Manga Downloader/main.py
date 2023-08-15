@@ -32,10 +32,15 @@ def get_image_urls(page_url):
     soup = bs4.BeautifulSoup(r.text, features='lxml')
     urls = []
     for div in soup.find_all('div'):
-        counts = collections.defaultdict(lambda : [])
+        counts = collections.defaultdict(lambda: [])
         for img in div.find_all('img'):
             src = img.get('src')
-            counts[src.split('//')[1].split('/')[0]].append(src)
+            if not src.startswith('http'):
+                continue
+            try:
+                counts[src.split('//')[1].split('/')[0]].append(src)
+            except IndexError:
+                continue
         try:
             urls.append(max(counts.values(), key=len))
         except ValueError:
@@ -58,7 +63,9 @@ def tryer_wrapper(func, *args, **kwargs):
         try:
             return func(*args, **kwargs)
         except Exception as err:
-            print(f"ERROR: '{err}' OCCURED\nIGNORING WITH TIMEOUT: {ERROR_TIMEOUT}")
+            print(f"ERROR: '{err}' OCCURED"
+                  + (f"\nWHEN EXECUTING: '{func.__name__}'({args}, {kwargs})" if DEBUG == 'TRUE' else "") +
+                  f"\nIGNORING WITH TIMEOUT: {ERROR_TIMEOUT}")
             time.sleep(ERROR_TIMEOUT)
 
 
@@ -86,6 +93,7 @@ def download_everything():
 
 if __name__ == '__main__':
     dotenv.load_dotenv()
+    DEBUG = os.getenv('DEBUG')
     LOCATION = os.getenv('LOCATION')
     TIMEOUT = float(os.getenv('TIMEOUT'))
     ERROR_TIMEOUT = float(os.getenv('ERROR_TIMEOUT'))
