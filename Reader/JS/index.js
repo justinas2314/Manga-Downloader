@@ -63,24 +63,20 @@ function updatePage() {
 }
 updatePage();
 window.addEventListener('keydown', (key) => {
-    switch (key.keyCode) {
-        // left
-        case 37:
+    switch (key.code) {
+        case "ArrowLeft":
             previousPage();
             updatePage();
             break;
-        // up
-        case 38:
+        case "ArrowUp":
             nextChapter();
             updatePage();
             break;
-        // right
-        case 39:
+        case "ArrowRight":
             nextPage();
             updatePage();
             break;
-        // down
-        case 40:
+        case "ArrowDown":
             previousChapterBeginning();
             updatePage();
             break;
